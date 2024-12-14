@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelime Kesişim Üretici</title>
+</head>
+<body>
+    <h1>Kelime Kesişim Üretici</h1>
+    <form method="POST">
+        <label for="words">Kelimeleri girin (virgülle ayırın):</label><br>
+        <input type="text" id="words" name="words" placeholder="ör: Charlotte, Olivia, Henry" style="width: 80%;"><br><br>
+        <button type="submit">Kesişim Üret</button>
+    </form>
+    <br>
+    {% if error %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    {% if grid_output %}
+    <h2>Sonuç:</h2>
+    <p style="font-family: monospace;">{{ grid_output|safe }}</p>
+    {% endif %}
+</body>
+</html>
