@@ -58,8 +58,11 @@ def create_crossword(words):
 
 def display_grid(grid):
     grid_str = ""
-    for row in grid:
-        grid_str += ''.join(row) + "<br>"
+    for row in grid[:15]:  # İlk 15 satır
+        grid_str += "<tr>"
+        for cell in row[:15]:  # İlk 15 sütun
+            grid_str += f"<td>{cell if cell != ' ' else '&nbsp;'}</td>"
+        grid_str += "</tr>"
     return grid_str
 
 @app.route('/', methods=['GET', 'POST'])

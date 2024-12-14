@@ -4,21 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelime Kesişim Üretici</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+        form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+        td {
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            border: 1px solid #000;
+            font-family: monospace;
+        }
+        .error {
+            color: red;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <h1>Kelime Kesişim Üretici</h1>
-    <form method="POST">
-        <label for="words">Kelimeleri girin (virgülle ayırın):</label><br>
-        <input type="text" id="words" name="words" placeholder="ör: Charlotte, Olivia, Henry" style="width: 80%;"><br><br>
-        <button type="submit">Kesişim Üret</button>
-    </form>
-    <br>
-    {% if error %}
-    <p style="color: red;">{{ error }}</p>
-    {% endif %}
-    {% if grid_output %}
-    <h2>Sonuç:</h2>
-    <p style="font-family: monospace;">{{ grid_output|safe }}</p>
-    {% endif %}
+<h1>Kelime Kesişim Üretici</h1>
+<form method="POST">
+    <label for="words">Kelimeleri girin (virgülle ayırın):</label><br>
+    <input type="text" id="words" name="words" placeholder="ör: Charlotte, Olivia, Henry" style="width: 80%;"><br><br>
+    <button type="submit">Kesişim Üret</button>
+</form>
+{% if error %}
+<p class="error">{{ error }}</p>
+{% endif %}
+{% if grid_output %}
+<h2>Sonuç:</h2>
+<table>
+    {{ grid_output|safe }}
+</table>
+{% endif %}
 </body>
 </html>
