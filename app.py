@@ -15,7 +15,7 @@ def find_intersection(word1, word2):
     return None
 
 def create_crossword(words):
-    grid_size = 50
+    grid_size = 30  # Daha küçük grid boyutu
     grid = np.full((grid_size, grid_size), ' ', dtype=str)
     center = grid_size // 2
 
@@ -93,11 +93,9 @@ def home():
         try:
             grid, success = create_crossword(words)
             if not success:
-                return render_template('index.html', error="Kelimeler birbiriyle kesişim oluşturamadı.")
-
+                return render_template('index.html', error="Kelimeler birbiriyle kesişim oluşturamadı. Lütfen ortak harf içerdiğinden emin olun.")
             grid_output = display_grid(grid)
             return render_template('index.html', grid_output=grid_output)
-
         except Exception as e:
             return render_template('index.html', error=f"Bir hata oluştu: {e}")
 
@@ -105,4 +103,4 @@ def home():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="0.0.0.0", port=port, debug=False)
