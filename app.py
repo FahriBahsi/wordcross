@@ -63,10 +63,8 @@ def create_crossword(words):
                             print(f"{word} yerleşti: Yatay ({r + i}, {start_col})")
                             break
         if not placed:
-            print(f"'{word}' kelimesi yerleştirilemedi.")
-            print(f"Yerleştirme sonrası grid:\n{grid}")
-
-    return grid, placed_any_word
+             print(f"Yerleştirme sonrası grid (15x15):\n{grid[:15, :15]}")
+             return grid, placed_any_word
 
 def display_grid(grid):
     grid_str = ""
@@ -74,7 +72,7 @@ def display_grid(grid):
         grid_str += "<tr>"
         for cell in row[:15]:  # İlk 15 sütun
             if cell.strip():  # Hücre boş değilse harfi yazdır
-                grid_str += f"<td>{cell}</td>"
+                grid_str += f"<td>{str(cell)}</td>"
             else:  # Boş hücreler için &nbsp;
                 grid_str += "<td>&nbsp;</td>"
         grid_str += "</tr>"
