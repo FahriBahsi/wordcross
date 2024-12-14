@@ -1,31 +1,19 @@
 from flask import Flask, render_template, request, jsonify
 import numpy as np
 import os
-from celery import Celery
+from celery_app import make_celery
 
-# Initialize Flask application
+# Flask uygulamasını başlat
 app = Flask(__name__)
 
-# Celery configuration
+# Celery ayarları
 app.config.update(
     CELERY_BROKER_URL=os.getenv("REDIS_URL", "redis://localhost:6379/0"),
     CELERY_RESULT_BACKEND=os.getenv("REDIS_URL", "redis://localhost:6379/0")
 )
 
-# Function to create Celery instance
-def make_celery(app):
-    celery = Celery(
-        app.import_name,
-        backend=app.config['CELERY_RESULT_BACKEND'],
-        broker=app.config['CELERY_BROKER_URL']
-    )
-    celery.conf.update(app.config)
-    return celery
-
-# Create Celery instance
 celery = make_celery(app)
 
-# Celery task for creating the crossword
 @celery.task
 def create_crossword_task(words):
     grid, success = create_crossword(words)
@@ -126,6 +114,26 @@ def home():
             return render_template('index.html', task_id=task.id)
         except Exception as e:
             return render_template('index.html', error=f"Task submission failed: {e}")
+
+    return render_template('index.html')
+
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    if request.method == 'POST':
+        words = request.form.get('words')
+        words = [word.strip() for word in words.split(',') if word.strip()]
+
+        if len(words) > 6:
+            return render_template('index.html', error="Maksimum 6 kelime girebilirsiniz.")
+
+        if not all(is_valid_word(word) for word in words):
+            return render_template('index.html', error="Kelime uzunluğu maksimum 12 karakter olmalı ve sadece harf içermeli.")
+
+        try:
+            task = create_crossword_task.delay(words)
+            return render_template('index.html', task_id=task.id)
+        except Exception as e:
+            return render_template('index.html', error=f"Task gönderimi başarısız: {e}")
 
     return render_template('index.html')
 
