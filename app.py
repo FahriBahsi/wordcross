@@ -28,6 +28,8 @@ def create_crossword(words):
 
     print(f"İlk kelime yerleşti: {first_word} ({row}, {col})")  # Hata ayıklama için
 
+    placed_any_word = False  # Yerleştirilen bir kelime olup olmadığını takip et
+
     for word in words[1:]:
         word = word.upper()
         placed = False
@@ -46,6 +48,7 @@ def create_crossword(words):
                                 grid[start_row + k, c + i] = char
                             positions.append((start_row, c + i, 'V'))
                             placed = True
+                            placed_any_word = True
                             print(f"{word} yerleşti: Dikey ({start_row}, {c + i})")  # Hata ayıklama için
                             break
                 elif direction == 'V':
@@ -56,11 +59,13 @@ def create_crossword(words):
                                 grid[r + i, start_col + k] = char
                             positions.append((r + i, start_col, 'H'))
                             placed = True
+                            placed_any_word = True
                             print(f"{word} yerleşti: Yatay ({r + i}, {start_col})")  # Hata ayıklama için
                             break
         if not placed:
             print(f"'{word}' kelimesi yerleştirilemedi.")  # Hata ayıklama için
-    return grid
+
+    return grid, placed_any_word
 
 def display_grid(grid):
     grid_str = ""
@@ -85,7 +90,12 @@ def home():
             if not is_valid_word(word):
                 return render_template('index.html', error=f"'{word}' geçersiz! Kelimeler yalnızca harflerden oluşmalı ve 12 karakterden kısa olmalı.")
 
-        grid = create_crossword(words)
+        grid, placed_any_word = create_crossword(words)
+
+        # Eğer hiçbir kelime yerleştirilemediyse hata mesajı döndür
+        if not placed_any_word:
+            return render_template('index.html', error="Kelimeler arasında kesişim bulunamadı.")
+
         grid_output = display_grid(grid)
         print(f"Üretilen Grid: \n{grid}")  # Hata ayıklama için
         return render_template('index.html', grid_output=grid_output)

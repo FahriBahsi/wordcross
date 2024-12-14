@@ -50,6 +50,10 @@
 <table>
     {{ grid_output|safe }}
 </table>
+{% if error %}
+<p style="color: red; text-align: center;">{{ error }}</p>
+{% endif %}
+
 {% endif %}
 </body>
 </html>
