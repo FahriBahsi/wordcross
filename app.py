@@ -28,7 +28,7 @@ def create_crossword(words):
 
     print(f"İlk kelime yerleşti: {first_word} ({row}, {col})")
 
-    placed_any_word = False  # Bu, en az bir kelimenin yerleştirilip yerleştirilmediğini takip eder
+    placed_any_word = False  # En az bir kelimenin yerleştiğini takip eder
 
     for word in words[1:]:
         word = word.upper()
@@ -62,10 +62,13 @@ def create_crossword(words):
                             placed_any_word = True
                             print(f"{word} yerleşti: Yatay ({r + i}, {start_col})")
                             break
-        if not placed:
+
+        if placed:
+            print(f"'{word}' yerleştirildi: Grid (ilk 15x15):\n{grid[:15, :15]}")
+        else:
             print(f"'{word}' kelimesi yerleştirilemedi.")
 
-    print(f"Yerleştirme sonrası grid:\n{grid[:15, :15]}")  # İlk 15x15'i kontrol edelim
+    print(f"Yerleştirme sonrası grid (ilk 15x15):\n{grid[:15, :15]}")
     return grid, placed_any_word
 
 def display_grid(grid):
@@ -80,7 +83,6 @@ def display_grid(grid):
         grid_str += "</tr>"
     print(f"Tablo İçeriği:\n{grid_str}")  # Tabloyu kontrol edin
     return grid_str
-
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -101,11 +103,10 @@ def home():
             return render_template('index.html', grid_output=grid_output)
 
         except Exception as e:
-            print(f"create_crossword fonksiyonunda bir hata oluştu: {e}")
-            return render_template('index.html', error="Bir hata oluştu, lütfen tekrar deneyin.")
+            print(f"Hata: {e}")
+            return render_template('index.html', error=f"Hata oluştu: {e}")
 
     return render_template('index.html')
-
 
 if __name__ == "__main__":
     # Heroku'nun PORT değişkenini kullanın
