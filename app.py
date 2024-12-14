@@ -72,12 +72,11 @@ def display_grid(grid):
     for row in grid[:15]:  # İlk 15 satır
         grid_str += "<tr>"
         for cell in row[:15]:  # İlk 15 sütun
-            if cell != ' ':  # Eğer hücre boş değilse harfi göster
-                grid_str += f"<td>{cell}</td>"
-            else:  # Boş hücrelerde boşluk bırak
-                grid_str += "<td>&nbsp;</td>"
+            grid_str += f"<td>{cell if cell.strip() else '&nbsp;'}</td>"
         grid_str += "</tr>"
+    print(f"Tablo İçeriği:\n{grid_str}")  # Hata ayıklama için tabloyu yazdır
     return grid_str
+
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
