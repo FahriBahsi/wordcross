@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import numpy as np
 import os
+import threading
 
 app = Flask(__name__)
 
@@ -38,7 +39,7 @@ def create_crossword(words):
                         start_row = r - word_idx
                         start_col = c + base_idx
 
-                        if 0 <= start_row < grid_size and 0 <= start_row + len(word) <= grid_size:
+                        if 0 <= start_row < grid_size and start_row + len(word) <= grid_size:
                             if all(grid[start_row + k, start_col] in (' ', word[k]) for k in range(len(word))):
                                 for k, char in enumerate(word):
                                     grid[start_row + k, start_col] = char
@@ -53,7 +54,7 @@ def create_crossword(words):
                         start_col = c - word_idx
                         start_row = r + base_idx
 
-                        if 0 <= start_col < grid_size and 0 <= start_col + len(word) <= grid_size:
+                        if 0 <= start_col < grid_size and start_col + len(word) <= grid_size:
                             if all(grid[start_row, start_col + k] in (' ', word[k]) for k in range(len(word))):
                                 for k, char in enumerate(word):
                                     grid[start_row, start_col + k] = char
@@ -78,6 +79,16 @@ def display_grid(grid):
         grid_str += "</tr>"
     return grid_str
 
+def process_crossword(words, result):
+    try:
+        grid, success = create_crossword(words)
+        if not success:
+            result['error'] = "Kelimeler birbiriyle kesişim oluşturamadı."
+        else:
+            result['grid_output'] = display_grid(grid)
+    except Exception as e:
+        result['error'] = f"Bir hata oluştu: {e}"
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
@@ -90,17 +101,18 @@ def home():
         if not all(is_valid_word(word) for word in words):
             return render_template('index.html', error="Kelime uzunluğu maksimum 12 karakter olmalı ve sadece harf içermeli.")
 
-        try:
-            grid, success = create_crossword(words)
-            if not success:
-                return render_template('index.html', error="Kelimeler birbiriyle kesişim oluşturamadı. Lütfen ortak harf içerdiğinden emin olun.")
-            grid_output = display_grid(grid)
-            return render_template('index.html', grid_output=grid_output)
-        except Exception as e:
-            return render_template('index.html', error=f"Bir hata oluştu: {e}")
+        result = {}
+        thread = threading.Thread(target=process_crossword, args=(words, result))
+        thread.start()
+        thread.join()
+
+        if 'error' in result:
+            return render_template('index.html', error=result['error'])
+
+        return render_template('index.html', grid_output=result['grid_output'])
 
     return render_template('index.html')
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=port)
