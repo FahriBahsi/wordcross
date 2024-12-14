@@ -72,7 +72,10 @@ def display_grid(grid):
     for row in grid[:15]:  # İlk 15 satır
         grid_str += "<tr>"
         for cell in row[:15]:  # İlk 15 sütun
-            grid_str += f"<td>{cell if cell != ' ' else '&nbsp;'}</td>"
+            if cell != ' ':  # Eğer hücre boş değilse harfi göster
+                grid_str += f"<td>{cell}</td>"
+            else:  # Boş hücrelerde boşluk bırak
+                grid_str += "<td>&nbsp;</td>"
         grid_str += "</tr>"
     return grid_str
 

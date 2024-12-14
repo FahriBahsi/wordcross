@@ -20,7 +20,7 @@
         }
         table {
             border-collapse: collapse;
-            margin: 0 auto;
+            margin: 20px auto;
         }
         td {
             width: 30px;
@@ -42,18 +42,17 @@
     <input type="text" id="words" name="words" placeholder="ör: Charlotte, Olivia, Henry" style="width: 80%;"><br><br>
     <button type="submit">Kesişim Üret</button>
 </form>
+
 {% if error %}
 <p class="error">{{ error }}</p>
 {% endif %}
+
 {% if grid_output %}
 <h2>Sonuç:</h2>
 <table>
     {{ grid_output|safe }}
 </table>
-{% if error %}
-<p style="color: red; text-align: center;">{{ error }}</p>
 {% endif %}
 
-{% endif %}
 </body>
 </html>
