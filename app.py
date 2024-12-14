@@ -64,6 +64,7 @@ def create_crossword(words):
                             break
         if not placed:
             print(f"'{word}' kelimesi yerleştirilemedi.")
+            print(f"Yerleştirme sonrası grid:\n{grid}")
 
     return grid, placed_any_word
 
@@ -72,14 +73,13 @@ def display_grid(grid):
     for row in grid[:15]:  # İlk 15 satır
         grid_str += "<tr>"
         for cell in row[:15]:  # İlk 15 sütun
-            if cell.strip():  # Eğer hücre boş değilse harfi göster
+            if cell.strip():  # Hücre boş değilse harfi yazdır
                 grid_str += f"<td>{cell}</td>"
-            else:  # Boş hücreler için &nbsp; koy
+            else:  # Boş hücreler için &nbsp;
                 grid_str += "<td>&nbsp;</td>"
         grid_str += "</tr>"
-    print(f"Tablo İçeriği:\n{grid_str}")  # Tabloyu konsolda kontrol et
+    print(f"Tablo İçeriği:\n{grid_str}")  # Tabloyu kontrol edin
     return grid_str
-
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -89,29 +89,17 @@ def home():
         words = [word.strip() for word in words.split(',') if word.strip()]
         print(f"Girilen kelimeler: {words}")
 
-        if len(words) < 2 or len(words) > 6:
-            return render_template('index.html', error="Lütfen 2 ile 6 arasında kelime girin.")
+        grid, placed_any_word = create_crossword(words)
 
-        for word in words:
-            if not is_valid_word(word):
-                return render_template('index.html', error=f"'{word}' geçersiz! Kelimeler yalnızca harflerden oluşmalı ve 12 karakterden kısa olmalı.")
+        # Eğer hiçbir kelime yerleşmediyse hata mesajı döndür
+        if not placed_any_word:
+            return render_template('index.html', error="Kelimeler arasında kesişim bulunamadı.")
 
-        try:
-            grid, placed_any_word = create_crossword(words)
-
-            # Eğer hiçbir kelime yerleşmediyse hata mesajı döndür
-            if not placed_any_word:
-                return render_template('index.html', error="Kelimeler arasında kesişim bulunamadı.")
-
-            grid_output = display_grid(grid)
-            return render_template('index.html', grid_output=grid_output)
-
-        except Exception as e:
-            print(f"Hata: {e}")
-            return render_template('index.html', error="Bir hata oluştu, lütfen tekrar deneyin.")
+        grid_output = display_grid(grid)
+        print(f"Grid Output:\n{grid_output}")  # Tablo çıktısını kontrol edin
+        return render_template('index.html', grid_output=grid_output)
 
     return render_template('index.html')
-
 
 if __name__ == "__main__":
     # Heroku'nun PORT değişkenini kullanın
