@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Kelime Kesişim Üretici ile kelimeleri birbiriyle kesiştirerek tablolar oluşturabilirsiniz.">
+    <meta name="author" content="Your Name">
     <title>Kelime Kesişim Üretici</title>
     <style>
         body {
@@ -13,25 +15,63 @@
             min-height: 100vh;
             margin: 0;
             flex-direction: column;
+            background-color: #f7f7f7;
+        }
+        h1 {
+            color: #333;
         }
         form {
             text-align: center;
             margin-bottom: 20px;
         }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
         table {
             border-collapse: collapse;
             margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         td {
             width: 30px;
             height: 30px;
             text-align: center;
-            border: 1px solid #000;
+            border: 1px solid #ccc;
             font-family: monospace;
+            background-color: #f9f9f9;
+        }
+        td.filled {
+            background-color: #007BFF;
+            color: white;
+            font-weight: bold;
         }
         .error {
             color: red;
             text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #ffe5e5;
+            border: 1px solid #ff0000;
+            border-radius: 5px;
+            display: inline-block;
         }
     </style>
 </head>
@@ -39,7 +79,7 @@
 <h1>Kelime Kesişim Üretici</h1>
 <form method="POST">
     <label for="words">Kelimeleri girin (virgülle ayırın):</label><br>
-    <input type="text" id="words" name="words" placeholder="ör: Charlotte, Olivia, Henry" style="width: 80%;"><br><br>
+    <input type="text" id="words" name="words" placeholder="ör: Charlotte, Olivia, Henry"><br>
     <button type="submit">Kesişim Üret</button>
 </form>
 
