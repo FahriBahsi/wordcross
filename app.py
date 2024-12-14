@@ -28,7 +28,7 @@ def create_crossword(words):
 
     print(f"İlk kelime yerleşti: {first_word} ({row}, {col})")
 
-    placed_any_word = False  # Bu, yerleştirilen kelime olup olmadığını takip eder
+    placed_any_word = False  # Bu, en az bir kelimenin yerleştirilip yerleştirilmediğini takip eder
 
     for word in words[1:]:
         word = word.upper()
@@ -63,8 +63,10 @@ def create_crossword(words):
                             print(f"{word} yerleşti: Yatay ({r + i}, {start_col})")
                             break
         if not placed:
-             print(f"Yerleştirme sonrası grid (15x15):\n{grid[:15, :15]}")
-             return grid, placed_any_word
+            print(f"'{word}' kelimesi yerleştirilemedi.")
+
+    print(f"Yerleştirme sonrası grid:\n{grid[:15, :15]}")  # İlk 15x15'i kontrol edelim
+    return grid, placed_any_word
 
 def display_grid(grid):
     grid_str = ""
@@ -87,17 +89,23 @@ def home():
         words = [word.strip() for word in words.split(',') if word.strip()]
         print(f"Girilen kelimeler: {words}")
 
-        grid, placed_any_word = create_crossword(words)
+        try:
+            grid, placed_any_word = create_crossword(words)
 
-        # Eğer hiçbir kelime yerleşmediyse hata mesajı döndür
-        if not placed_any_word:
-            return render_template('index.html', error="Kelimeler arasında kesişim bulunamadı.")
+            # Eğer hiçbir kelime yerleşmediyse hata mesajı döndür
+            if not placed_any_word:
+                return render_template('index.html', error="Kelimeler arasında kesişim bulunamadı.")
 
-        grid_output = display_grid(grid)
-        print(f"Grid Output:\n{grid_output}")  # Tablo çıktısını kontrol edin
-        return render_template('index.html', grid_output=grid_output)
+            grid_output = display_grid(grid)
+            print(f"Grid Output:\n{grid_output}")  # Tablo çıktısını kontrol edin
+            return render_template('index.html', grid_output=grid_output)
+
+        except Exception as e:
+            print(f"create_crossword fonksiyonunda bir hata oluştu: {e}")
+            return render_template('index.html', error="Bir hata oluştu, lütfen tekrar deneyin.")
 
     return render_template('index.html')
+
 
 if __name__ == "__main__":
     # Heroku'nun PORT değişkenini kullanın
