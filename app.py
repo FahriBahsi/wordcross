@@ -26,8 +26,9 @@ def create_crossword(words):
     grid[row, col:col + len(first_word)] = list(first_word)
     positions = [(row, col, 'H')]
 
-    print(f"İlk kelime yerleşti: {first_word} ({row}, {col})")  # Hata ayıklama için
-    print(f"Grid Durumu İlk Kelime Sonrası:\n{grid}")  # Grid'in durumunu kontrol et
+    print(f"İlk kelime yerleşti: {first_word} ({row}, {col})")
+
+    placed_any_word = False  # Bu, yerleştirilen kelime olup olmadığını takip eder
 
     for word in words[1:]:
         word = word.upper()
@@ -47,8 +48,8 @@ def create_crossword(words):
                                 grid[start_row + k, c + i] = char
                             positions.append((start_row, c + i, 'V'))
                             placed = True
+                            placed_any_word = True
                             print(f"{word} yerleşti: Dikey ({start_row}, {c + i})")
-                            print(f"Grid Durumu '{word}' Sonrası:\n{grid}")  # Her kelime sonrası kontrol
                             break
                 elif direction == 'V':
                     start_col = c - j
@@ -58,12 +59,13 @@ def create_crossword(words):
                                 grid[r + i, start_col + k] = char
                             positions.append((r + i, start_col, 'H'))
                             placed = True
+                            placed_any_word = True
                             print(f"{word} yerleşti: Yatay ({r + i}, {start_col})")
-                            print(f"Grid Durumu '{word}' Sonrası:\n{grid}")  # Her kelime sonrası kontrol
                             break
         if not placed:
             print(f"'{word}' kelimesi yerleştirilemedi.")
-    return grid
+
+    return grid, placed_any_word
 
 def display_grid(grid):
     grid_str = ""
@@ -81,7 +83,7 @@ def home():
     if request.method == 'POST':
         words = request.form.get('words')
         words = [word.strip() for word in words.split(',') if word.strip()]
-        print(f"Girilen kelimeler: {words}")  # Hata ayıklama için
+        print(f"Girilen kelimeler: {words}")
 
         if len(words) < 2 or len(words) > 6:
             return render_template('index.html', error="Lütfen 2 ile 6 arasında kelime girin.")
@@ -90,17 +92,22 @@ def home():
             if not is_valid_word(word):
                 return render_template('index.html', error=f"'{word}' geçersiz! Kelimeler yalnızca harflerden oluşmalı ve 12 karakterden kısa olmalı.")
 
-        grid, placed_any_word = create_crossword(words)
+        try:
+            grid, placed_any_word = create_crossword(words)
 
-        # Eğer hiçbir kelime yerleştirilemediyse hata mesajı döndür
-        if not placed_any_word:
-            return render_template('index.html', error="Kelimeler arasında kesişim bulunamadı.")
+            # Eğer hiçbir kelime yerleşmediyse hata mesajı döndür
+            if not placed_any_word:
+                return render_template('index.html', error="Kelimeler arasında kesişim bulunamadı.")
 
-        grid_output = display_grid(grid)
-        print(f"Üretilen Grid: \n{grid}")  # Hata ayıklama için
-        return render_template('index.html', grid_output=grid_output)
+            grid_output = display_grid(grid)
+            return render_template('index.html', grid_output=grid_output)
+
+        except Exception as e:
+            print(f"Hata: {e}")
+            return render_template('index.html', error="Bir hata oluştu, lütfen tekrar deneyin.")
 
     return render_template('index.html')
+
 
 if __name__ == "__main__":
     # Heroku'nun PORT değişkenini kullanın
