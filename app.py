@@ -27,8 +27,7 @@ def create_crossword(words):
     positions = [(row, col, 'H')]
 
     print(f"İlk kelime yerleşti: {first_word} ({row}, {col})")  # Hata ayıklama için
-
-    placed_any_word = False  # Yerleştirilen bir kelime olup olmadığını takip et
+    print(f"Grid Durumu İlk Kelime Sonrası:\n{grid}")  # Grid'in durumunu kontrol et
 
     for word in words[1:]:
         word = word.upper()
@@ -48,8 +47,8 @@ def create_crossword(words):
                                 grid[start_row + k, c + i] = char
                             positions.append((start_row, c + i, 'V'))
                             placed = True
-                            placed_any_word = True
-                            print(f"{word} yerleşti: Dikey ({start_row}, {c + i})")  # Hata ayıklama için
+                            print(f"{word} yerleşti: Dikey ({start_row}, {c + i})")
+                            print(f"Grid Durumu '{word}' Sonrası:\n{grid}")  # Her kelime sonrası kontrol
                             break
                 elif direction == 'V':
                     start_col = c - j
@@ -59,22 +58,21 @@ def create_crossword(words):
                                 grid[r + i, start_col + k] = char
                             positions.append((r + i, start_col, 'H'))
                             placed = True
-                            placed_any_word = True
-                            print(f"{word} yerleşti: Yatay ({r + i}, {start_col})")  # Hata ayıklama için
+                            print(f"{word} yerleşti: Yatay ({r + i}, {start_col})")
+                            print(f"Grid Durumu '{word}' Sonrası:\n{grid}")  # Her kelime sonrası kontrol
                             break
         if not placed:
-            print(f"'{word}' kelimesi yerleştirilemedi.")  # Hata ayıklama için
-
-    return grid, placed_any_word
+            print(f"'{word}' kelimesi yerleştirilemedi.")
+    return grid
 
 def display_grid(grid):
     grid_str = ""
     for row in grid[:15]:  # İlk 15 satır
         grid_str += "<tr>"
         for cell in row[:15]:  # İlk 15 sütun
-            grid_str += f"<td>{cell if cell.strip() else '&nbsp;'}</td>"
+            grid_str += f"<td>{cell if cell != ' ' else '&nbsp;'}</td>"
         grid_str += "</tr>"
-    print(f"Tablo İçeriği:\n{grid_str}")  # Hata ayıklama için tabloyu yazdır
+    print(f"Tablo İçeriği:\n{grid_str}")  # Tablo içeriğini kontrol et
     return grid_str
 
 
